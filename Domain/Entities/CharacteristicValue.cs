@@ -2,7 +2,7 @@
 
 namespace Flora.Domain.Entities;
 
-public class CharacteristicPlant : BaseEntity
+public class CharacteristicValue : BaseEntity
 {
     public string Value { get; set; }
 

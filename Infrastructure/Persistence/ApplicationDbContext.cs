@@ -37,13 +37,16 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     }
 
     public DbSet<Basket> Baskets => Set<Basket>();
+    public DbSet<BasketItem> BasketItems => Set<BasketItem>();
+    public DbSet<CharacteristicValue> CharacteristicValues => Set<CharacteristicValue>();
+    public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Plant> Plants => Set<Plant>();
     public DbSet<Wishlist> Wishlists => Set<Wishlist>();
     public DbSet<Characteristic> Characteristics => Set<Characteristic>();
-    public DbSet<CharacteristicPlant> CharacteristicPlants => Set<CharacteristicPlant>();
+    public DbSet<CharacteristicValue> CharacteristicPlants => Set<CharacteristicValue>();
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
