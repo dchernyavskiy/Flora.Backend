@@ -9,4 +9,5 @@ public class Category : BaseEntity
     public Category Parent { get; set; }
 
     public ICollection<Plant> Plants { get; set; }
+    public ICollection<Characteristic> Characteristics { get; set; }
 }

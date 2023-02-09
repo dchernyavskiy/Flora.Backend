@@ -9,7 +9,7 @@ public class Plant : BaseEntity
     [DataType("decimal(8,2)")] public decimal Price { get; set; }
     public string Description { get; set; }
     
-    public ICollection<FeatureValue> FeatureValues { get; set; } = null!;
     public ICollection<Category> Categories { get; set; }
     public ICollection<Basket> Baskets { get; set; }
+    public ICollection<CharacteristicPlant> CharacteristicPlants { get; set; }
 }
