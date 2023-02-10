@@ -21,19 +21,21 @@ public class ProfileService : IProfileService
         var user = await _userManager.GetUserAsync(context.Subject);
         if (user != null)
         {
+            var userId = await _userManager.GetUserIdAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
             var phone = await _userManager.GetPhoneNumberAsync(user);
             var email = await _userManager.GetEmailAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
 
             var claims = new List<Claim>();
             foreach (var role in roles)
             {
                 claims.Add(new Claim(JwtClaimTypes.Role, role));
             }
-            claims.Add(new Claim(JwtClaimTypes.PhoneNumber, phone));
-            claims.Add(new Claim(JwtClaimTypes.Email, email));
             claims.Add(new Claim(JwtClaimTypes.Id, userId));
+            claims.Add(new Claim(JwtClaimTypes.PhoneNumber, phone ?? string.Empty));
+            claims.Add(new Claim(JwtClaimTypes.Email, email ?? string.Empty));
+            claims.Add(new Claim(nameof(user.FirstName), user.FirstName));
+            claims.Add(new Claim(nameof(user.LastName), user.LastName));
             
             context.IssuedClaims.AddRange(claims);   
         }
