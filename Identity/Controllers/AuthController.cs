@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Services;
+﻿using System.Security.Claims;
+using IdentityServer4.Services;
 using Flora.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,8 @@ public class AuthController : Controller
         _roleManager = roleManager;
         _interactionService = interactionService;
     }
-
+    
     [HttpGet]
-    [Route("")]
     public IActionResult Login(string returnUrl = "https://localhost:5001")
     {
         var vm = new LoginViewModel()
