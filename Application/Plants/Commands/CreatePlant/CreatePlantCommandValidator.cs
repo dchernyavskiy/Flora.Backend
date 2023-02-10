@@ -14,8 +14,5 @@ public class CreatePlantCommandValidator : AbstractValidator<CreatePlantCommand>
             .NotEmpty();
         RuleFor(x => x.Price)
             .GreaterThan(0m);
-        RuleFor(x => x.CategoryIds)
-            .Must(x => x.Count >= 1)
-            .NotEmpty();
     }
 }

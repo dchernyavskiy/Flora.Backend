@@ -3,6 +3,7 @@ using Flora.Application.Common.Exceptions;
 using Flora.Application.Common.Interfaces;
 using Flora.Application.Common.Mappings;
 using Flora.Application.Plants.Commands.CreatePlant;
+using Flora.Application.Plants.Common;
 using Flora.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
