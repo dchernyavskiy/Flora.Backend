@@ -9,5 +9,5 @@ public class Characteristic : BaseEntity
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }
 
-    public ICollection<CharacteristicValue> CharacteristicPlants { get; set; }
+    public ICollection<CharacteristicValue> CharacteristicValues { get; set; }
 }

@@ -11,6 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flora.Application.Plants.Queries.GetPlant;
 
+public class ReviewDto : IMapWith<Review>
+{
+    public string Message { get; set; }
+    public Guid UserId { get; set; }
+    public string UserFirstName { get; set; }
+    public string UserLastName { get; set; }
+    public int Rate { get; set; }
+    public DateTime PostDate { get; set; }
+}
+
 public class PlantDto : BaseDto, IMapWith<Plant>
 {
     public string Name { get; set; } = null!;
@@ -19,7 +29,7 @@ public class PlantDto : BaseDto, IMapWith<Plant>
     public CategoryDto Category { get; set; }
     
     public ICollection<CharacteristicDto> CharacteristicValues { get; set; }
-    public ICollection<Review> Reviews { get; set; }
+    public ICollection<ReviewDto> Reviews { get; set; }
 }
 
 public record GetPlantQuery : IRequest<PlantDto>

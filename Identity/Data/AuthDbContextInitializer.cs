@@ -42,18 +42,15 @@ public class AuthDbContextInitializer
         await SeedUsersAsync();
     }
 
-    private const string CandidateRoleName = "Candidate";
-    private const string CompanyRoleName = "Company";
-    private const string SystemAdministratorRoleName = "SystemAdministrator";
+    private const string BuyerRoleName = "Buyer";
+    private const string AdministratorRoleName = "Administrator";
 
     private async Task SeedRolesAsync()
     {
-        var candidate = new IdentityRole() { Name = CandidateRoleName };
-        var company = new IdentityRole() { Name = CompanyRoleName };
-        var systemAdministrator = new IdentityRole() { Name = SystemAdministratorRoleName };
+        var buyer = new IdentityRole() { Name = BuyerRoleName };
+        var systemAdministrator = new IdentityRole() { Name = AdministratorRoleName };
 
-        await _roleManager.CreateAsync(candidate);
-        await _roleManager.CreateAsync(company);
+        await _roleManager.CreateAsync(buyer);
         await _roleManager.CreateAsync(systemAdministrator);
     }
 
@@ -61,12 +58,11 @@ public class AuthDbContextInitializer
 
     private async Task SeedUsersAsync()
     {
-        await SeedSysAdminAsync();
-        await SeedCandidateAsync();
-        await SeedCompanyAsync();
+        await SeedAdminAsync();
+        await SeedBuyerAsync();
     }
 
-    private async Task SeedSysAdminAsync()
+    private async Task SeedAdminAsync()
     {
         var user = new AppUser()
         {
@@ -77,10 +73,10 @@ public class AuthDbContextInitializer
         };
         var result = await _userManager.CreateAsync(user, Password);
         if (result.Succeeded)
-            await _userManager.AddToRoleAsync(user, SystemAdministratorRoleName);
+            await _userManager.AddToRoleAsync(user, AdministratorRoleName);
     }
 
-    private async Task SeedCandidateAsync()
+    private async Task SeedBuyerAsync()
     {
         var user = new AppUser()
         {
@@ -91,20 +87,6 @@ public class AuthDbContextInitializer
         };
         var result = await _userManager.CreateAsync(user, Password);
         if (result.Succeeded)
-            await _userManager.AddToRoleAsync(user, CandidateRoleName);
-    }
-
-    private async Task SeedCompanyAsync()
-    {
-        var user = new AppUser()
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "company",
-            Email = "company@mail.com",
-            EmailConfirmed = true,
-        };
-        var result = await _userManager.CreateAsync(user, Password);
-        if (result.Succeeded)
-            await _userManager.AddToRoleAsync(user, CompanyRoleName);
+            await _userManager.AddToRoleAsync(user, BuyerRoleName);
     }
 }
