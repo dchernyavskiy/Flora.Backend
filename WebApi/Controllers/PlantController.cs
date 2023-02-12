@@ -3,6 +3,7 @@ using Flora.Application.Plants.Commands.AddToBasket;
 using Flora.Application.Plants.Commands.AddToWishlist;
 using Flora.Application.Plants.Commands.CreatePlant;
 using Flora.Application.Plants.Commands.DeletePlant;
+using Flora.Application.Plants.Commands.RemoveFromBasket;
 using Flora.Application.Plants.Commands.UpdatePlant;
 using Flora.Application.Plants.Queries.GetPlant;
 using Flora.Application.Plants.Queries.GetPlants;
@@ -42,8 +43,13 @@ public class PlantController : ApiControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = nameof(Role.Buyer))]
-    public async Task<ActionResult<Guid>> AddToBasket([FromBody] AddToBasketCommand command)
+    public async Task<ActionResult<bool>> AddToBasket([FromBody] AddToBasketCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> RemoveFromBasket([FromBody] RemoveFromBasketCommand command)
     {
         return await Mediator.Send(command);
     }

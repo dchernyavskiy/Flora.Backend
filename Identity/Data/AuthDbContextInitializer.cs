@@ -67,7 +67,7 @@ public class AuthDbContextInitializer
         var user = new AppUser()
         {
             Id = Guid.NewGuid().ToString(),
-            UserName = "sysadmin",
+            UserName = "admin",
             Email = "admin@mail.com",
             EmailConfirmed = true,
         };
@@ -81,8 +81,8 @@ public class AuthDbContextInitializer
         var user = new AppUser()
         {
             Id = Guid.NewGuid().ToString(),
-            UserName = "candidate",
-            Email = "candidate@mail.com",
+            UserName = "buyer",
+            Email = "buyer@mail.com",
             EmailConfirmed = true,
         };
         var result = await _userManager.CreateAsync(user, Password);

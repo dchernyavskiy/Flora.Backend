@@ -27,7 +27,10 @@ public static class ConfigureServices
         services.AddSwaggerGen();
         services.AddHttpClient();
         services.AddApiVersioning();
-
+        
+        services.AddDataProtection();
+        services.AddSingleton<IBasketService, BasketService>();
+        
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
         services.AddHttpContextAccessor();
