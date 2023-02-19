@@ -5,7 +5,7 @@ namespace Flora.Domain.Entities;
 
 public class Characteristic : BaseEntity
 {
-    [StringLength(50)] public string Name { get; set; }
+    [StringLength(1000)] public string Name { get; set; }
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }
 

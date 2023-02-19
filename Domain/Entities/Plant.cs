@@ -8,6 +8,7 @@ public class Plant : BaseEntity
     [StringLength(100)] public string Name { get; set; } = null!;
     [DataType("decimal(8,2)")] public decimal Price { get; set; }
     [StringLength(1000)] public string Description { get; set; }
+    public DateTime DeliveryDate { get; set; }
 
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }

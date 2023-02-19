@@ -5,8 +5,8 @@ namespace Flora.Domain.Entities;
 
 public class Category : BaseEntity
 {
-    [StringLength(20)]public string Name { get; set; }
-    public Guid ParentId { get; set; }
+    [StringLength(200)]public string Name { get; set; }
+    public Guid? ParentId { get; set; }
     public Category Parent { get; set; }
 
     public ICollection<Category> Children { get; set; }
