@@ -52,9 +52,10 @@ public static class ConfigureServices
         {
             opts.AddPolicy("AllowAll", policy =>
             {
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.AllowAnyOrigin();
+                policy.WithOrigins("https://localhost:4200")
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             });
         });
         services.AddAuthentication(opts =>

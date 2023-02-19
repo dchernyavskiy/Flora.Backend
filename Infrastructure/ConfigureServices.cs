@@ -31,6 +31,7 @@ public static class ConfigureServices
         {
             opts.UseSqlServer(configuration["DbConnection"],
             builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
+            opts.EnableSensitiveDataLogging();
         });
         services.AddScoped<ApplicationDbContextInitializer>();
 
