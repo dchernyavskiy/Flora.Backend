@@ -41,13 +41,21 @@ public class BasketService : IBasketService
         SaveBasketItems(basketItems);
     }
 
+    public void AddBasketItems(IEnumerable<BasketItemBriefDto> items)
+    {
+        var itemsList = items.ToList();
+        itemsList.AddRange(GetBasketItems());
+        SaveBasketItems(itemsList);
+    }
+
     private void SaveBasketItems(List<BasketItemBriefDto> basketItems)
     {
         var unprotectedBasketItemsJson = JsonSerializer.Serialize(basketItems);
         var basketItemsJson = _dataProtector.Protect(unprotectedBasketItemsJson);
         _httpContextAccessor.HttpContext?.Response.Cookies.Append(nameof(Basket), basketItemsJson, new CookieOptions()
         {
-            Expires = DateTimeOffset.Now.AddDays(100)
+            Path = "/",
+            Expires = DateTime.Now.AddDays(100),
         });
     }
 
@@ -59,5 +67,10 @@ public class BasketService : IBasketService
             basketItems.Remove(foundedItem);
         
         SaveBasketItems(basketItems);
+    }
+
+    public void Clear()
+    {
+        SaveBasketItems(new List<BasketItemBriefDto>());
     }
 }
