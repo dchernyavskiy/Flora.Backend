@@ -11,14 +11,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flora.Application.Plants.Queries.GetPlant;
 
-public class ReviewDto : IMapWith<Review>
+public class ReviewDto : BaseDto, IMapWith<Review>
 {
-    public string Message { get; set; }
-    public Guid UserId { get; set; }
-    public string UserFirstName { get; set; }
-    public string UserLastName { get; set; }
+    public string Comment { get; set; }
+    public string FullName { get; set; }
     public int Rate { get; set; }
     public DateTime PostDate { get; set; }
+    public ICollection<ReviewDto> Children { get; set; }
 }
 
 public class PlantDto : BaseDto, IMapWith<Plant>
@@ -26,8 +25,9 @@ public class PlantDto : BaseDto, IMapWith<Plant>
     public string Name { get; set; } = null!;
     public decimal Price { get; set; }
     public string Description { get; set; }
+    public double Rate { get; set; }
     public CategoryDto Category { get; set; }
-    
+
     public ICollection<CharacteristicDto> CharacteristicValues { get; set; }
     public ICollection<ReviewDto> Reviews { get; set; }
 }
@@ -50,11 +50,19 @@ public class GetPlantQueryHandler : IRequestHandler<GetPlantQuery, PlantDto>
 
     public async Task<PlantDto> Handle(GetPlantQuery request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Plants.FirstOrDefaultAsync(x => x.Id == request.Id);
+        var entity = await _context.Plants
+            .Include(x => x.Category)
+            .Include(x => x.Reviews).ThenInclude(x => x.Children)
+            .Include(x => x.CharacteristicValues).ThenInclude(x => x.Characteristic)
+            .FirstOrDefaultAsync(x => x.Id == request.Id);
 
         if (entity == null)
             throw new NotFoundException(nameof(Plant), request.Id);
 
-        return _mapper.Map<PlantDto>(entity);
+        var mappedEntity = _mapper.Map<PlantDto>(entity);
+
+        mappedEntity.Rate = mappedEntity.Reviews.Any() ? mappedEntity.Reviews.Average(x => x.Rate) : 0d;
+
+        return mappedEntity;
     }
 }
