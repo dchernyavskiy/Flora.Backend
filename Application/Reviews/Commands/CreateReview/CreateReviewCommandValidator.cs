@@ -10,7 +10,7 @@ public class CreateReviewCommandValidator : AbstractValidator<CreateReviewComman
             .LessThanOrEqualTo(5)
             .GreaterThanOrEqualTo(0);
             
-        RuleFor(x => x.Message)
+        RuleFor(x => x.Comment)
             .MinimumLength(1)
             .MaximumLength(300);
     }

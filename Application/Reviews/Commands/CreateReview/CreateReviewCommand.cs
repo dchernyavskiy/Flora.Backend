@@ -8,7 +8,9 @@ namespace Flora.Application.Reviews.Commands.CreateReview;
 
 public record CreateReviewCommand : IRequest<Guid>, IMapWith<Review>
 {
-    public string Message { get; set; } = null!;
+    public string Comment { get; set; } = null!;
+    public string FullName { get; set; }
+    public string Email { get; set; }
     public int Rate { get; set; } = 0;
     public Guid? ParentId { get; set; } = null;
     public Guid PlantId { get; set; }
@@ -31,16 +33,9 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, G
 
     public async Task<Guid> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
-        var userId = _currentUserService.UserId;
-        if (userId == Guid.Empty)
-            throw new UnauthorizedAccessException();
-
         var entity = _mapper.Map<Review>(request);
         entity.Id = Guid.NewGuid();
-        entity.UserId = userId;
         entity.PostDate = _dateTime.Now;
-        entity.UserFirstName = _currentUserService.FirstName;
-        entity.UserLastName = _currentUserService.LastName;
 
         await _context.Reviews.AddAsync(entity);
         await _context.SaveChangesAsync(cancellationToken);
