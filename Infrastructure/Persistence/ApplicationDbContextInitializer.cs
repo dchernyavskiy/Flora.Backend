@@ -51,37 +51,41 @@ public class ApplicationDbContextInitializer
                             Name = f.Random.Word()
                         }).ToList(),
                     };
-                    category.Plants = Enumerable.Range(0, f.Random.Int(4, 13)).Select(x => new Plant()
+                    category.Plants = Enumerable.Range(0, f.Random.Int(4, 13)).Select(x =>
                     {
-                        Id = Guid.NewGuid(),
-                        Name = f.Commerce.ProductName(),
-                        Description = f.Random.Words(30),
-                        Price = f.Random.Decimal() * f.Random.Int(100, 1000),
-                        DeliveryDate = f.Date.Past(1),
-                        CharacteristicValues = category.Characteristics.Select(x => new CharacteristicValue()
+                        var plant = new Plant()
                         {
                             Id = Guid.NewGuid(),
-                            Characteristic = x,
-                            Value = f.Random.Word()
-                        }).ToList(),
-                        Reviews = Enumerable.Range(0, f.Random.Int(0, 4)).Select(x => new Review()
-                        {
-                            Id = Guid.NewGuid(),
-                            Comment = f.Random.Words(20),
-                            FullName = f.Name.FullName(),
-                            Email = f.Internet.Email(),
-                            Rate = f.Random.Int(1, 5),
-                            PostDate = f.Date.Past(1),
-                            Children = Enumerable.Range(0, f.Random.Int(0, 3)).Select(x => new Review()
+                            Name = f.Commerce.ProductName(),
+                            Description = f.Random.Words(30),
+                            Price = f.Random.Decimal() * f.Random.Int(100, 1000),
+                            DeliveryDate = f.Date.Past(1),
+                            CharacteristicValues = category.Characteristics.Select(x => new CharacteristicValue()
+                            {
+                                Id = Guid.NewGuid(),
+                                Characteristic = x,
+                                Value = f.Random.Word()
+                            }).ToList(),
+                            Reviews = Enumerable.Range(0, f.Random.Int(0, 4)).Select(x => new Review()
                             {
                                 Id = Guid.NewGuid(),
                                 Comment = f.Random.Words(20),
                                 FullName = f.Name.FullName(),
                                 Email = f.Internet.Email(),
                                 Rate = f.Random.Int(1, 5),
-                                PostDate = f.Date.Past(1)
+                                PostDate = f.Date.Past(1),
+                                Children = Enumerable.Range(0, f.Random.Int(0, 3)).Select(x => new Review()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    Comment = f.Random.Words(20),
+                                    FullName = f.Name.FullName(),
+                                    Email = f.Internet.Email(),
+                                    PostDate = f.Date.Past(1)
+                                }).ToList()
                             }).ToList()
-                        }).ToList()
+                        };
+                        plant.Rate = plant.Reviews.Any() ? plant.Reviews.Where(y => y.Rate != null).Average(y => y.Rate!.Value) : null;
+                        return plant;
                     }).ToList();
                     return category;
                 }).ToList();
