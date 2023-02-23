@@ -43,9 +43,11 @@ public class BasketService : IBasketService
 
     public void AddBasketItems(IEnumerable<BasketItemBriefDto> items)
     {
-        var itemsList = items.ToList();
-        itemsList.AddRange(GetBasketItems());
-        SaveBasketItems(itemsList);
+        SaveBasketItems(items.Join(GetBasketItems(),
+            outer => outer.PlantId,
+            inner => inner.PlantId,
+            (outer, inner) => outer.PlantId == inner.PlantId ? outer : inner
+        ).ToList());
     }
 
     private void SaveBasketItems(List<BasketItemBriefDto> basketItems)

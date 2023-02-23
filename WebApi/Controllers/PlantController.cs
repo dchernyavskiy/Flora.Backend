@@ -7,6 +7,7 @@ using Flora.Application.Plants.Commands.RemoveFromBasket;
 using Flora.Application.Plants.Commands.UpdatePlant;
 using Flora.Application.Plants.Queries.GetPlant;
 using Flora.Application.Plants.Queries.GetPlants;
+using Flora.Application.Plants.Queries.SearchPlants;
 using Flora.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,11 @@ namespace Flora.WebApi.Controllers;
 [ApiVersionNeutral]
 public class PlantController : ApiControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<Collection<SearchPlantBriefDto>>> Search([FromQuery] SearchPlantsQuery query)
+    {
+        return await Mediator.Send(query);
+    }
     [HttpGet]
     public async Task<ActionResult<PlantDto>> Get([FromQuery] GetPlantQuery query)
     {

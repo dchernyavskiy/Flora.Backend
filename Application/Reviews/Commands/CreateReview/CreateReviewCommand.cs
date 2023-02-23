@@ -3,6 +3,7 @@ using Flora.Application.Common.Interfaces;
 using Flora.Application.Common.Mappings;
 using Flora.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Flora.Application.Reviews.Commands.CreateReview;
 
@@ -37,6 +38,18 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, G
         entity.Id = Guid.NewGuid();
         entity.PostDate = _dateTime.Now;
 
+
+        if (request.ParentId != null)
+        {
+            entity.PlantId = null;
+            var plant = await _context.Plants
+                .Include(x => x.Reviews)
+                .FirstOrDefaultAsync(x => x.Id == request.PlantId);
+            
+            if(plant != null)
+                plant.Rate = plant.Reviews.Where(x => x.Rate != null).Average(x => x.Rate!.Value);
+        }
+        
         await _context.Reviews.AddAsync(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
