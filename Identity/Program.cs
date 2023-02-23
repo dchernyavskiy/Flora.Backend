@@ -1,5 +1,6 @@
 using IdentityServer4.Services;
 using Flora.Identity.Data;
+using Flora.Identity.Interfaces;
 using Flora.Identity.Models;
 using Flora.Identity.Services;
 using Microsoft.AspNetCore.Identity;
@@ -52,13 +53,16 @@ internal class Program
         {
             opts.AddPolicy(allowWebApp, policy =>
             {
-                policy.WithOrigins(builder.Configuration["WebApplicationUri"]!);
-                policy.AllowAnyHeader();
+                policy.WithOrigins(builder.Configuration["WebApplicationUri"]!)
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             });
         });
 
         builder.Services.AddScoped<AuthDbContextInitializer>();
         builder.Services.AddTransient<IProfileService, ProfileService>();
+        builder.Services.AddScoped<IEmailSender, EmailSender>();
 
         var app = builder.Build();
 
