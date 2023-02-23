@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Flora.Application.Categories.Queries.GetCategory;
 using Flora.Application.Common.Exceptions;
@@ -8,6 +9,7 @@ using Flora.Application.Plants.Common;
 using Flora.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Flora.Application.Plants.Queries.GetPlant;
 
@@ -52,7 +54,7 @@ public class GetPlantQueryHandler : IRequestHandler<GetPlantQuery, PlantDto>
     {
         var entity = await _context.Plants
             .Include(x => x.Category)
-            .Include(x => x.Reviews).ThenInclude(x => x.Children)
+            .Include(x => x.Reviews).ThenInclude(x => x.Children).ThenInclude(x => x.Children).ThenInclude(x => x.Children).ThenInclude(x => x.Children).ThenInclude(x => x.Children).ThenInclude(x => x.Children).ThenInclude(x => x.Children).ThenInclude(x => x.Children)
             .Include(x => x.CharacteristicValues).ThenInclude(x => x.Characteristic)
             .FirstOrDefaultAsync(x => x.Id == request.Id);
 

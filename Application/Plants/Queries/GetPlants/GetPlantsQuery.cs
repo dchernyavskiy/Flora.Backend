@@ -7,7 +7,6 @@ using Flora.Application.Common.Models;
 using Flora.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.DynamicLinq;
 
 namespace Flora.Application.Plants.Queries.GetPlants;
 
@@ -18,14 +17,7 @@ public class PlantBriefDto : IMapWith<Plant>
     public decimal Price { get; set; }
 
     public DateTime DeliveryDate { get; set; }
-    // public double Rate { get; set; }
-
-    // public void Mapping(Profile profile)
-    // {
-    //     profile.CreateMap<Plant, PlantBriefDto>()
-    //         .ForMember(x => x.Rate,
-    //             opts => opts.MapFrom(src => src.Reviews.Average(x => x.Rate)));
-    // }
+    public double Rate { get; set; }
 }
 
 public enum OrderBy
@@ -63,7 +55,7 @@ public class GetPlantsQueryHandler : IRequestHandler<GetPlantsQuery, PaginatedLi
             .Where(x => x.CategoryId == request.CategoryId || x.Category.ParentId == request.CategoryId ||
                         x.Category.Children.Any(x => x.Id == request.CategoryId))
             .ProjectTo<PlantBriefDto>(_mapper.ConfigurationProvider)
-            // .OrderBy(Enum.GetName(typeof(OrderBy), request.OrderBy) + (request.Ascending ? "" : " desc"))
+            .OrderBy(Enum.GetName(typeof(OrderBy), request.OrderBy) + (request.Ascending ? "" : " desc"))
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 
