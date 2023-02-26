@@ -11,6 +11,7 @@ public class CategoryEntityConfiguration : IEntityTypeConfiguration<Category>
         builder.HasOne(x => x.Parent)
             .WithMany(x => x.Children)
             .HasForeignKey(x => x.ParentId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired(false);
     }
 }

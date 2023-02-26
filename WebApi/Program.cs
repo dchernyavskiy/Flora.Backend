@@ -4,43 +4,54 @@ using Flora.Infrastructure.Persistence;
 using Flora.WebApi;
 using Minio.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddWebApiServices();
-builder.Services.AddIdentityServices(builder.Configuration);
-
-builder.Services.AddMinio(opts =>
+namespace Flora.WebApi;
+internal class Program
 {
-    opts.Endpoint = builder.Configuration["Minio:Endpoint"]!;
-    opts.AccessKey = builder.Configuration["Minio:AccessKey"]!;
-    opts.SecretKey = builder.Configuration["Minio:SecretKey"]!;
-    opts.ConfigureClient(client =>
+    public static async Task Main(string[] args)
     {
-        client.Build();
-    });
-});
+        var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+        builder.Services.AddApplicationServices();
+        builder.Services.AddInfrastructureServices(builder.Configuration);
+        builder.Services.AddWebApiServices();
+        builder.Services.AddIdentityServices(builder.Configuration);
+
+        builder.Services.AddMinio(opts =>
+        {
+            opts.Endpoint = builder.Configuration["Minio:Endpoint"]!;
+            opts.AccessKey = builder.Configuration["Minio:AccessKey"]!;
+            opts.SecretKey = builder.Configuration["Minio:SecretKey"]!;
+            opts.ConfigureClient(client => { client.Build(); });
+        });
+
+        var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    using (var scope = app.Services.CreateScope())
-    {
-        var initializer = scope.ServiceProvider.GetService<ApplicationDbContextInitializer>();
-        await initializer?.SeedAsync()!;
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            using (var scope = app.Services.CreateScope())
+            {
+                var initializer = scope.ServiceProvider.GetService<ApplicationDbContextInitializer>();
+                await initializer?.SeedAsync()!;
+            }
+        }
+
+        app.UseCors("AllowAll");
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseApiVersioning();
+        app.MapControllers();
+
+        app.Run();
     }
 }
 
-app.UseCors("AllowAll");
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseApiVersioning();
-app.MapControllers();
+// namespace Flora.WebApi
+// {
+//     public partial class Program { }
+// }
 
-app.Run();
+

@@ -27,7 +27,10 @@ public static class ConfigureServices
         services.AddSwaggerGen();
         services.AddHttpClient();
         services.AddApiVersioning();
-
+        
+        services.AddDataProtection();
+        services.AddSingleton<IBasketService, BasketService>();
+        
         services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
         services.AddHttpContextAccessor();
@@ -49,9 +52,10 @@ public static class ConfigureServices
         {
             opts.AddPolicy("AllowAll", policy =>
             {
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.AllowAnyOrigin();
+                policy.WithOrigins("https://localhost:4200")
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             });
         });
         services.AddAuthentication(opts =>

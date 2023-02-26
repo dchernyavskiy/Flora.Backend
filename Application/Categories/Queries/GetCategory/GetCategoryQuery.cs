@@ -35,7 +35,9 @@ public class GetCategoryQueryHandler : IRequestHandler<GetCategoryQuery, Categor
 
     public async Task<CategoryDto> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Categories.FirstOrDefaultAsync(x => x.Id == request.Id);
+        var entity = await _context.Categories
+            .Include(x => x.Children)
+            .FirstOrDefaultAsync(x => x.Id == request.Id);
 
         if (entity == null)
             throw new NotFoundException(nameof(Category), request.Id);

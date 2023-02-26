@@ -35,6 +35,7 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Col
     {
         return await _context.Categories
             .Include(x => x.Children)
+            .Where(x => x.Parent == null)
             .ProjectTo<CategoryBriefDto>(_mapper.ConfigurationProvider)
             .ToCollectionAsync();
     }

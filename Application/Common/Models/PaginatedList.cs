@@ -28,4 +28,14 @@ public class PaginatedList<T>
 
         return new PaginatedList<T>(items, count, pageNumber, pageSize);
     }
+
+    public static Task<PaginatedList<T>> CreateAsync(IEnumerable<T> source, int pageNumber, int pageSize)
+    {
+        return new Task<PaginatedList<T>>(() =>
+        {
+            var count = source.Count();
+            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            return new PaginatedList<T>(items, count, pageNumber, pageSize);
+        });
+    }
 }

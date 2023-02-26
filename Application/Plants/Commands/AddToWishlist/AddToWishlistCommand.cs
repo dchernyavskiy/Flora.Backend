@@ -50,7 +50,10 @@ public class AddToWishlistCommandHandler : IRequestHandler<AddToWishlistCommand,
                 .FirstOrDefaultAsync(x => x.UserId == userId)
             : await _context.Wishlists.FirstOrDefaultAsync(x => x.Id == wishlistId);
 
-        wishlist!.Plants.Add(plant);
+        if (wishlist.Plants == null)
+            (wishlist.Plants = new List<Plant>()).Add(plant);
+        else
+            wishlist!.Plants.Add(plant);
         await _context.SaveChangesAsync(cancellationToken);
 
         return true;
