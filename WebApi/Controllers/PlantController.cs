@@ -4,6 +4,7 @@ using Flora.Application.Plants.Commands.AddToWishlist;
 using Flora.Application.Plants.Commands.CreatePlant;
 using Flora.Application.Plants.Commands.DeletePlant;
 using Flora.Application.Plants.Commands.RemoveFromBasket;
+using Flora.Application.Plants.Commands.RemoveFromWishlist;
 using Flora.Application.Plants.Commands.UpdatePlant;
 using Flora.Application.Plants.Queries.GetPlant;
 using Flora.Application.Plants.Queries.GetPlants;
@@ -46,6 +47,14 @@ public class PlantController : ApiControllerBase
     public async Task<ActionResult<bool>> AddToWishlist([FromBody] AddToWishlistCommand command)
     {
         return await Mediator.Send(command);
+    }
+
+    [HttpDelete]
+    [Authorize(Roles = nameof(Role.Buyer))]
+    public async Task<ActionResult> RemoveFromWishlist([FromBody] RemoveFromWishlistCommand command)
+    {
+        await Mediator.Send(command);
+        return Ok();
     }
 
     [HttpPost]
