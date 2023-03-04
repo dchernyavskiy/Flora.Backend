@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Flora.Domain.Common;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Flora.Domain.Entities;
 
@@ -11,11 +12,11 @@ public class Plant : BaseEntity
     [Range(0, 5)] public double? Rate { get; set; }
     public DateTime DeliveryDate { get; set; }
 
-    public Guid CategoryId { get; set; }
-    public Category Category { get; set; }
-    public ICollection<BasketItem> BasketItems { get; set; }
-    public ICollection<OrderItem> OrderItems { get; set; }
-    public ICollection<CharacteristicValue> CharacteristicValues { get; set; }
-    public ICollection<Review> Reviews { get; set; }
-    public ICollection<Wishlist> Wishlists { get; set; }
+    [BsonIgnore]public Guid CategoryId { get; set; }
+    [BsonIgnore]public Category Category { get; set; }
+    [BsonIgnore]public ICollection<BasketItem> BasketItems { get; set; }
+    [BsonIgnore]public ICollection<OrderItem> OrderItems { get; set; }
+    [BsonIgnoreIfNull]public ICollection<CharacteristicValue> CharacteristicValues { get; set; }
+    [BsonIgnoreIfNull]public ICollection<Review> Reviews { get; set; }
+    [BsonIgnoreIfNull]public ICollection<Wishlist> Wishlists { get; set; }
 }

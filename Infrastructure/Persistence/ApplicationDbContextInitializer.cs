@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Bogus;
+using Flora.Application.Common.Interfaces;
 using Flora.Domain.Entities;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Flora.Infrastructure.Persistence;
 
@@ -8,12 +11,14 @@ public class ApplicationDbContextInitializer
 {
     private readonly ILogger<ApplicationDbContextInitializer> _logger;
     private readonly ApplicationDbContext _context;
+    private readonly IMongoDbContext _mongoDbContext;
 
     public ApplicationDbContextInitializer(ILogger<ApplicationDbContextInitializer> logger,
-        ApplicationDbContext context)
+        ApplicationDbContext context, IMongoDbContext mongoDbContext)
     {
         _logger = logger;
         _context = context;
+        _mongoDbContext = mongoDbContext;
     }
 
     public async Task SeedAsync()
@@ -94,15 +99,9 @@ public class ApplicationDbContextInitializer
 
         await _context.Categories.AddRangeAsync(categories);
         await _context.SaveChangesAsync(CancellationToken.None);
-    }
-}
 
-public static class Extensions
-{
-    public static T Or<T>(this T input, T output, float probability)
-    {
-        var random = new Random();
-        if (random.NextDouble() > probability) return output;
-        return input;
+
+        await _mongoDbContext.Categories.InsertManyAsync(categories);
+        await _mongoDbContext.Plants.InsertManyAsync(categories.SelectMany(x => x.Children).SelectMany(x => x.Plants));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Flora.Domain.Common;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Flora.Domain.Entities;
 
@@ -11,10 +12,10 @@ public class Review : BaseEntity
     [Range(0, 5)] public int? Rate { get; set; }
     public DateTime PostDate { get; set; }
 
-    public Guid? ParentId { get; set; } = null;
-    public Review Parent { get; set; } = null;
-    public ICollection<Review> Children { get; set; }
+    [BsonIgnore]public Guid? ParentId { get; set; } = null;
+    [BsonIgnore]public Review Parent { get; set; } = null;
+    [BsonIgnoreIfNull]public ICollection<Review> Children { get; set; }
 
-    public Guid? PlantId { get; set; } = null;
-    public Plant? Plant { get; set; } = null;
+    [BsonIgnore]public Guid? PlantId { get; set; } = null;
+    [BsonIgnore]public Plant? Plant { get; set; } = null;
 }
