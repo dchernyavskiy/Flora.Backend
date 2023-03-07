@@ -30,7 +30,7 @@ public class PlantDto : BaseDto, IMapWith<Plant>
     public double Rate { get; set; }
     public CategoryDto Category { get; set; }
 
-    public ICollection<CharacteristicDto> CharacteristicValues { get; set; }
+    public ICollection<CharacteristicValueDto> CharacteristicValues { get; set; }
     public ICollection<ReviewDto> Reviews { get; set; }
 }
 

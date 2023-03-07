@@ -17,7 +17,7 @@ public record UpdatePlantCommand : IRequest, IMapWith<Plant>
     public decimal Price { get; set; }
     public string Description { get; set; } = null!;
 
-    public ICollection<CharacteristicDto> Characteristics { get; set; } = null!;
+    public ICollection<CharacteristicValueDto> Characteristics { get; set; } = null!;
     public ICollection<Guid> CategoryIds { get; set; } = null!;
 }
 

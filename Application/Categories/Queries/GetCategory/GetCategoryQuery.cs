@@ -4,6 +4,7 @@ using Flora.Application.Common.Exceptions;
 using Flora.Application.Common.Interfaces;
 using Flora.Application.Common.Mappings;
 using Flora.Application.Common.Models;
+using Flora.Application.Plants.Common;
 using Flora.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,13 @@ public class CategoryDto : BaseDto, IMapWith<Category>
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public ICollection<CharacteristicDto> Characteristics { get; set; }
     public ICollection<CategoryBriefDto> Children { get; set; }
+}
+
+public class CharacteristicDto : BaseDto, IMapWith<Characteristic>
+{
+    public string Name { get; set; }
 }
 
 public record GetCategoryQuery : IRequest<CategoryDto>
@@ -37,6 +44,7 @@ public class GetCategoryQueryHandler : IRequestHandler<GetCategoryQuery, Categor
     {
         var entity = await _context.Categories
             .Include(x => x.Children)
+            .Include(x => x.Characteristics)
             .FirstOrDefaultAsync(x => x.Id == request.Id);
 
         if (entity == null)

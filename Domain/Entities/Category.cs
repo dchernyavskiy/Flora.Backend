@@ -7,7 +7,7 @@ public class Category : BaseEntity
 {
     [StringLength(200)]public string Name { get; set; }
     public Guid? ParentId { get; set; }
-    public Category Parent { get; set; }
+    public Category? Parent { get; set; }
 
     public ICollection<Category> Children { get; set; }
     public ICollection<Plant> Plants { get; set; }
