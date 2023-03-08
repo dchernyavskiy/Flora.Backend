@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Flora.Domain.Common;
+using Flora.Domain.ValueObjects;
 
 namespace Flora.Domain.Entities;
 
@@ -10,6 +11,7 @@ public class Plant : BaseEntity
     [StringLength(1000)] public string Description { get; set; }
     [Range(0, 5)] public double? Rate { get; set; }
     public DateTime DeliveryDate { get; set; }
+    public Photo Photo { get; set; }
 
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }

@@ -6,6 +6,7 @@ using Flora.Application.Common.Mappings;
 using Flora.Application.Common.Models;
 using Flora.Application.Plants.Common;
 using Flora.Domain.Entities;
+using Flora.Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ public class CategoryDto : BaseDto, IMapWith<Category>
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public Photo Photo { get; set; }
     public ICollection<CharacteristicDto> Characteristics { get; set; }
     public ICollection<CategoryBriefDto> Children { get; set; }
 }

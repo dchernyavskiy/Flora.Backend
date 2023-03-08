@@ -17,7 +17,14 @@ internal static class CategoryFixture
 
     internal static async Task<Category> CreateOneCategoryWithCharacteristicsAsync()
     {
-        var entity = new Category()
+        var entity = CreateOneCategoryWithCharacteristics();
+        await AddAsync(entity);
+        return entity;
+    }
+
+    internal static Category CreateOneCategoryWithCharacteristics()
+    {
+        return new Category()
         {
             Id = Guid.NewGuid(),
             Name = "Category1",
@@ -29,8 +36,6 @@ internal static class CategoryFixture
                 new () { Id = Guid.NewGuid(), Name = "Char4" },
             }
         };
-        await AddAsync(entity);
-        return entity;
     }
 
     internal static async Task<Category> CreateFullCategoryWithCharacteristicsAsync()

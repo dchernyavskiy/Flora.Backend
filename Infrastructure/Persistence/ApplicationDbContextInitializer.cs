@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Bogus;
 using Flora.Domain.Entities;
+using Flora.Domain.ValueObjects;
 
 namespace Flora.Infrastructure.Persistence;
 
@@ -45,6 +46,7 @@ public class ApplicationDbContextInitializer
                     {
                         Id = Guid.NewGuid(),
                         Name = f.Commerce.Categories(1).FirstOrDefault()!,
+                        Photo = new Photo(){Link = f.Image.PicsumUrl()},
                         Characteristics = Enumerable.Range(0, f.Random.Int(3, 10)).Select(x => new Characteristic()
                         {
                             Id = Guid.NewGuid(),
@@ -60,6 +62,10 @@ public class ApplicationDbContextInitializer
                             Description = f.Random.Words(30),
                             Price = f.Random.Decimal() * f.Random.Int(100, 1000),
                             DeliveryDate = f.Date.Past(1),
+                            Photo = new Photo()
+                            {
+                                Link = f.Image.PicsumUrl()
+                            },
                             CharacteristicValues = category.Characteristics.Select(x => new CharacteristicValue()
                             {
                                 Id = Guid.NewGuid(),
@@ -84,7 +90,9 @@ public class ApplicationDbContextInitializer
                                 }).ToList()
                             }).ToList()
                         };
-                        plant.Rate = plant.Reviews.Any() ? plant.Reviews.Where(y => y.Rate != null).Average(y => y.Rate!.Value) : null;
+                        plant.Rate = plant.Reviews.Any()
+                            ? plant.Reviews.Where(y => y.Rate != null).Average(y => y.Rate!.Value)
+                            : null;
                         return plant;
                     }).ToList();
                     return category;

@@ -12,5 +12,7 @@ public class PlantEntityConfiguration : IEntityTypeConfiguration<Plant>
             .WithOne(x => x.Plant)
             .HasForeignKey(x => x.PlantId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.OwnsOne(x => x.Photo);
     }
 }
