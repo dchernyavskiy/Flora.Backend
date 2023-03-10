@@ -18,7 +18,8 @@ public class IdentityConfiguration
             new ApiResource("FloraWebApi", "Web Api", new[] { JwtClaimTypes.Name, JwtClaimTypes.Role })
                 { Scopes = { "FloraWebApi" } }
         };
-
+    
+    public static string ClientUrl = "https://localhost:4200";
     public static IEnumerable<Client> Clients =
         new List<Client>
         {

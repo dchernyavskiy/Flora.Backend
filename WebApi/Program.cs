@@ -29,14 +29,14 @@ internal class Program
 // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            using (var scope = app.Services.CreateScope())
-            {
-                var initializer = scope.ServiceProvider.GetService<ApplicationDbContextInitializer>();
-                await initializer?.SeedAsync()!;
-            }
         }
+
+        using var scope = app.Services.CreateScope();
+        var initializer = scope.ServiceProvider.GetService<ApplicationDbContextInitializer>();
+        await initializer?.SeedAsync()!;
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseCors("AllowAll");
         app.UseHttpsRedirection();

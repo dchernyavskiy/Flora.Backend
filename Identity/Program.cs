@@ -31,6 +31,7 @@ internal class Program
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
 
+        IdentityConfiguration.ClientUrl = builder.Configuration["WebApplicationUri"]!;
         builder.Services.AddIdentityServer()
             .AddAspNetIdentity<AppUser>()
             .AddInMemoryApiResources(IdentityConfiguration.ApiResources)
