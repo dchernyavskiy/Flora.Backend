@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Flora.Application.Common.Interfaces;
+using Flora.Domain.Entities;
 using Flora.Infrastructure.Common;
 using Flora.Infrastructure.Persistence.Interceptors;
 using MediatR;
@@ -34,11 +35,23 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
         optionsBuilder.ConfigureWarnings(opts =>
             opts.Ignore(CoreEventId.NavigationBaseIncludeIgnored, CoreEventId.NavigationBaseIncluded));
     }
-    
+
+    public DbSet<Basket> Baskets => Set<Basket>();
+    public DbSet<BasketItem> BasketItems => Set<BasketItem>();
+    public DbSet<CharacteristicValue> CharacteristicValues => Set<CharacteristicValue>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Plant> Plants => Set<Plant>();
+    public DbSet<Wishlist> Wishlists => Set<Wishlist>();
+    public DbSet<Characteristic> Characteristics => Set<Characteristic>();
+    public DbSet<CharacteristicValue> CharacteristicPlants => Set<CharacteristicValue>();
+
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         await _mediator.DispatchDomainEvents(this);
-        
+
         return await base.SaveChangesAsync(cancellationToken);
     }
 }

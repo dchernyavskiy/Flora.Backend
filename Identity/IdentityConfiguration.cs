@@ -24,7 +24,7 @@ public class IdentityConfiguration
         {
             new Client
             {
-                ClientId = "job-board-web-app",
+                ClientId = "flora-web-app",
                 ClientName = "Flora Web",
                 AllowedGrantTypes = GrantTypes.Code,
                 RequireClientSecret = false,
