@@ -1,11 +1,8 @@
 ﻿using Flora.Application.Baskets.Commands.ClearBasket;
-using Flora.Application.Baskets.Commands.CreateBasket;
 using Flora.Application.Baskets.Commands.UpdateBasket;
 using Flora.Application.Baskets.Queries.GetBasket;
 using Flora.Application.Baskets.Queries.GetBasketCount;
 using Flora.Application.Common.Models;
-using Flora.Domain.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flora.WebApi.Controllers;
@@ -23,13 +20,6 @@ public class BasketController : ApiControllerBase
     public async Task<ActionResult<Collection<BasketItemDto>>> Get([FromQuery] GetBasketQuery query)
     {
         return await Mediator.Send(query);
-    }
-
-    [HttpPost]
-    [Authorize(Roles = nameof(Role.Buyer))]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateBasketCommand command)
-    {
-        return await Mediator.Send(command);
     }
 
     [HttpPost]

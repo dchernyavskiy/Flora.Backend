@@ -8,6 +8,10 @@ public class CreateCharacteristicCommandValidator : AbstractValidator<CreateChar
     {
         RuleFor(x => x.Name)
             .MinimumLength(2)
-            .MaximumLength(50);
+            .MaximumLength(50)
+            .NotNull();
+
+        RuleFor(x => x.CategoryId)
+            .NotEqual(Guid.Empty);
     }   
 }

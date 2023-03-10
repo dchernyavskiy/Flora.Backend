@@ -17,6 +17,5 @@ public static class MappingExtensions
         => queryable.ProjectTo<TDestination>(configuration).AsNoTracking().ToListAsync();
 
     public static Task<Collection<TDestination>> ToCollectionAsync<TDestination>(
-        this IQueryable<TDestination> queryable)
-        => Collection<TDestination>.CreateAsync(queryable);
+        this IQueryable<TDestination> queryable) where TDestination : class => Collection<TDestination>.CreateAsync(queryable.AsNoTracking());
 }

@@ -5,18 +5,18 @@ using Flora.Domain.Entities;
 
 namespace Flora.Application.Plants.Common;
 
-public class CharacteristicDto : BaseDto, IMapWith<CharacteristicValue>
+public class CharacteristicValueDto : BaseDto, IMapWith<CharacteristicValue>
 {
     public string Name { get; set; } = null!;
     public string Value { get; set; } = null!;
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<CharacteristicDto, CharacteristicValue>()
+        profile.CreateMap<CharacteristicValueDto, CharacteristicValue>()
             .ForMember(x => x.CharacteristicId, opts => opts.MapFrom(src => src.Id))
             .ForMember(x => x.Value, opts => opts.MapFrom(src => src.Value));
 
-        profile.CreateMap<CharacteristicValue, CharacteristicDto>()
+        profile.CreateMap<CharacteristicValue, CharacteristicValueDto>()
             .ForMember(x => x.Name, opts => opts.MapFrom(src => src.Characteristic.Name))
             .ForMember(x => x.Value, opts => opts.MapFrom(src => src.Value))
             .ForMember(x => x.Id, opts => opts.MapFrom(src => src.CharacteristicId));

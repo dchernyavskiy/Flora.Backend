@@ -13,5 +13,7 @@ public class CategoryEntityConfiguration : IEntityTypeConfiguration<Category>
             .HasForeignKey(x => x.ParentId)
             .OnDelete(DeleteBehavior.NoAction)
             .IsRequired(false);
+
+        builder.OwnsOne(x => x.Photo);
     }
 }

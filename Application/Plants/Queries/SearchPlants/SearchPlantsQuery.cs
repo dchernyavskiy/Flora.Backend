@@ -4,6 +4,7 @@ using Flora.Application.Common.Interfaces;
 using Flora.Application.Common.Mappings;
 using Flora.Application.Common.Models;
 using Flora.Domain.Entities;
+using Flora.Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,7 @@ public class SearchPlantBriefDto : BaseDto, IMapWith<Plant>
 {
     public string PlantName { get; set; } = null!;
     public string CategoryName { get; set; } = null!;
+    public Photo Photo { get; set; }
 
     public void Mapping(Profile profile)
     {

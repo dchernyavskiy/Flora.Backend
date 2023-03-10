@@ -5,6 +5,7 @@ using Flora.Application.Common.Interfaces;
 using Flora.Application.Common.Mappings;
 using Flora.Application.Common.Models;
 using Flora.Domain.Entities;
+using Flora.Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ public class PlantBriefDto : IMapWith<Plant>
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
     public decimal Price { get; set; }
+    public Photo Photo { get; set; }
 
     public DateTime DeliveryDate { get; set; }
     public double Rate { get; set; }

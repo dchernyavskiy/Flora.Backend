@@ -23,7 +23,7 @@ public record UpdateCategoryCommand : IRequest, IMapWith<Category>
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public Guid ParentId { get; set; }
+    public Guid? ParentId { get; set; } = null;
 }
 
 public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand>

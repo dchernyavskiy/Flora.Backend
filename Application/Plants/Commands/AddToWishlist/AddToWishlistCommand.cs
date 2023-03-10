@@ -1,6 +1,7 @@
 ﻿using Flora.Application.Common.Exceptions;
 using Flora.Application.Common.Interfaces;
-using Flora.Application.Wishlists.Commands.CreateWishlist;
+using Flora.Application.Plants.Commands.RemoveFromWishlist;
+using Flora.Application.Wishlists.Queries.GetWishlist;
 using Flora.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -36,24 +37,21 @@ public class AddToWishlistCommandHandler : IRequestHandler<AddToWishlistCommand,
         if (plant == null)
             throw new NotFoundException(nameof(Plant));
 
-        var doesUserHaveWishlist = await _context.Wishlists
-            .Where(x => x.UserId == userId)
-            .AnyAsync();
+        var wishlistDto = await _sender.Send(new GetWishlistQuery());
+        var wishlist = await _context.Wishlists
+            .Include(x => x.Plants)
+            .SingleAsync(x => x.Id == wishlistDto.Id, cancellationToken: cancellationToken);
 
-        var wishlistId = Guid.Empty;
-        if (!doesUserHaveWishlist)
-            wishlistId = await _sender.Send(new CreateWishlistCommand());
-
-        var wishlist = doesUserHaveWishlist
-            ? await _context.Wishlists
-                .Include(x => x.Plants)
-                .FirstOrDefaultAsync(x => x.UserId == userId)
-            : await _context.Wishlists.FirstOrDefaultAsync(x => x.Id == wishlistId);
-
-        if (wishlist.Plants == null)
+        if (wishlist.Plants is null)
             (wishlist.Plants = new List<Plant>()).Add(plant);
+        else if (wishlist.Plants.Any(x => x.Id == request.PlantId))
+        {
+            await _sender.Send(new RemoveFromWishlistCommand() { PlantId = request.PlantId });
+            return false;
+        }
         else
             wishlist!.Plants.Add(plant);
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return true;

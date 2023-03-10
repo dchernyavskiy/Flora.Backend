@@ -11,7 +11,21 @@ public class CreateReviewCommandValidator : AbstractValidator<CreateReviewComman
             .GreaterThanOrEqualTo(0);
             
         RuleFor(x => x.Comment)
-            .MinimumLength(1)
-            .MaximumLength(300);
+            .MaximumLength(300)
+            .NotEmpty()
+            .NotNull();
+
+        RuleFor(x => x.FullName)
+            .MinimumLength(2)
+            .NotNull()
+            .NotEmpty();
+
+        RuleFor(x => x.Email)
+            .EmailAddress()
+            .NotEmpty()
+            .NotNull();
+
+        RuleFor(x => x.PlantId)
+            .NotEqual(Guid.Empty);
     }
 }

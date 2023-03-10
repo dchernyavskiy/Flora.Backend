@@ -10,8 +10,8 @@ namespace Flora.Application.Categories.Commands.CreateCategory;
 public record CreateCategoryCommand : IRequest<Guid>, IMapWith<Category>
 {
     public string Name { get; set; }
-    public Guid ParentId { get; set; }
-    public ICollection<CreateCharacteristicCommand> Characteristics { get; set; }
+    public Guid? ParentId { get; set; } = null;
+    public ICollection<CreateCharacteristicCommand>? Characteristics { get; set; } = null;
 }
 
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Guid>
@@ -36,10 +36,11 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
         await _context.Categories.AddAsync(entity);
 
-        foreach (var characteristic in request.Characteristics)
-        {
-            await _sender.Send(characteristic with { CategoryId = entity.Id });
-        }
+        if (request.Characteristics is not null)
+            foreach (var characteristic in request.Characteristics)
+            {
+                await _sender.Send(characteristic with { CategoryId = entity.Id });
+            }
 
         await _context.SaveChangesAsync(cancellationToken);
 
