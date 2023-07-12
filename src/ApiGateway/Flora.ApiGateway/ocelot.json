@@ -1,0 +1,52 @@
+﻿{
+  "Routes": [
+    {
+      "ServiceName": "catalogs",
+      "DownstreamPathTemplate": "/api/{version}/catalogs/{**remainder}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 4000
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/catalogs/{**remainder}",
+      "SwaggerKey": "catalogs"
+    },
+    {
+      "ServiceName": "identity",
+      "DownstreamPathTemplate": "/api/{version}/identity/{**remainder}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/identity/{**remainder}",
+      "SwaggerKey": "identity"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "catalogs",
+      "Config": [
+        {
+          "Name": "Catalog API",
+          "Version": "v1",
+          "Url": "http://localhost:4000/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "identity",
+      "Config": [
+        {
+          "Name": "Identity API",
+          "Version": "v1",
+          "Url": "http://localhost:7000/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}
