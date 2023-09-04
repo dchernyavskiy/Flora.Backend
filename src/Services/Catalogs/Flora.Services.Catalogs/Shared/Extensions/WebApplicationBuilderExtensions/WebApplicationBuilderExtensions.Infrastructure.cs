@@ -30,26 +30,25 @@ public static partial class WebApplicationBuilderExtensions
         builder.Services.AddCustomJwtAuthentication(builder.Configuration);
         builder.Services.AddCustomAuthorization(
             rolePolicies: new List<RolePolicy>
-            {
-                new(CatalogConstants.Role.Admin, new List<string> { CatalogConstants.Role.Admin }),
-                new(CatalogConstants.Role.User, new List<string> { CatalogConstants.Role.User })
-            }
-        );
+                          {
+                              new(CatalogConstants.Role.Admin, new List<string> {CatalogConstants.Role.Admin}),
+                              new(CatalogConstants.Role.User, new List<string> {CatalogConstants.Role.User})
+                          });
 
         builder.Services.AddEmailService(builder.Configuration);
         builder.Services.AddCqrs(
+            serviceLifetime: ServiceLifetime.Scoped,
             pipelines: new[]
-            {
-                typeof(RequestValidationBehavior<,>),
-                typeof(StreamRequestValidationBehavior<,>),
-                typeof(StreamLoggingBehavior<,>),
-                typeof(StreamCachingBehavior<,>),
-                typeof(LoggingBehavior<,>),
-                typeof(CachingBehavior<,>),
-                typeof(InvalidateCachingBehavior<,>),
-                typeof(EfTxBehavior<,>)
-            }
-        );
+                       {
+                           typeof(RequestValidationBehavior<,>),
+                           typeof(StreamRequestValidationBehavior<,>),
+                           typeof(StreamLoggingBehavior<,>),
+                           typeof(StreamCachingBehavior<,>),
+                           typeof(LoggingBehavior<,>),
+                           typeof(CachingBehavior<,>),
+                           typeof(InvalidateCachingBehavior<,>),
+                           typeof(EfTxBehavior<,>)
+                       });
 
         // https://github.com/tonerdo/dotnet-env
         DotNetEnv.Env.TraversePath().Load();
@@ -86,32 +85,46 @@ public static partial class WebApplicationBuilderExtensions
             (busRegistrationContext, busFactoryConfigurator) =>
             {
                 busFactoryConfigurator.AddProductPublishers();
-            }
-        );
+            });
 
         if (builder.Environment.IsTest() == false)
         {
-            builder.AddCustomHealthCheck(healthChecksBuilder =>
-            {
-                var postgresOptions = builder.Configuration.BindOptions<PostgresOptions>(nameof(PostgresOptions));
-                var rabbitMqOptions = builder.Configuration.BindOptions<RabbitMqOptions>(nameof(RabbitMqOptions));
+            builder.AddCustomHealthCheck(
+                healthChecksBuilder =>
+                {
+                    var postgresOptions = builder.Configuration.BindOptions<PostgresOptions>(nameof(PostgresOptions));
+                    var rabbitMqOptions = builder.Configuration.BindOptions<RabbitMqOptions>(nameof(RabbitMqOptions));
 
-                Guard.Against.Null(postgresOptions, nameof(postgresOptions));
-                Guard.Against.Null(rabbitMqOptions, nameof(rabbitMqOptions));
+                    Guard.Against.Null(postgresOptions, nameof(postgresOptions));
+                    Guard.Against.Null(rabbitMqOptions, nameof(rabbitMqOptions));
 
-                healthChecksBuilder
-                    .AddNpgSql(
-                        postgresOptions.ConnectionString,
-                        name: "CatalogsService-Postgres-Check",
-                        tags: new[] { "postgres", "infra", "database", "catalogs-service", "live", "ready" }
-                    )
-                    .AddRabbitMQ(
-                        rabbitMqOptions.ConnectionString,
-                        name: "CatalogsService-RabbitMQ-Check",
-                        timeout: TimeSpan.FromSeconds(3),
-                        tags: new[] { "rabbitmq", "infra", "bus", "catalogs-service", "live", "ready" }
-                    );
-            });
+                    healthChecksBuilder
+                        .AddNpgSql(
+                            postgresOptions.ConnectionString,
+                            name: "CatalogsService-Postgres-Check",
+                            tags: new[]
+                                  {
+                                      "postgres",
+                                      "infra",
+                                      "database",
+                                      "catalogs-service",
+                                      "live",
+                                      "ready"
+                                  })
+                        .AddRabbitMQ(
+                            rabbitMqOptions.ConnectionString,
+                            name: "CatalogsService-RabbitMQ-Check",
+                            timeout: TimeSpan.FromSeconds(3),
+                            tags: new[]
+                                  {
+                                      "rabbitmq",
+                                      "infra",
+                                      "bus",
+                                      "catalogs-service",
+                                      "live",
+                                      "ready"
+                                  });
+                });
         }
 
         builder.Services.AddCustomValidators(Assembly.GetExecutingAssembly());

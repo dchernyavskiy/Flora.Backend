@@ -101,9 +101,9 @@ public class CreateProductHandler : ICommandHandler<CreateProduct, CreateProduct
         var product = Product.Create(
             command.Id,
             command.Name,
+            command.Description,
             Stock.Of(command.Stock, command.RestockThreshold, command.MaxStockThreshold),
             command.Status,
-            command.Description,
             command.Price,
             category!.Id,
             images);

@@ -37,15 +37,15 @@ public class Product : Aggregate<Guid>
     public Category? Category { get; set; }
     public Guid CategoryId { get; set; } = default!;
     public Stock Stock { get; set; } = default!;
-    public ICollection<Image> Images { get; set; } = null!;
+    public ICollection<Image> Images { get; set; } = Enumerable.Empty<Image>().ToList();
     public ICollection<CharacteristicValue> CharacteristicValues { get; set; } = null!;
 
     public static Product Create(
         Guid id,
         string name,
+        string? description,
         Stock stock,
         ProductStatus status,
-        string? description,
         decimal price,
         Guid categoryId,
         IList<Image>? images = null

@@ -1,6 +1,7 @@
 using BuildingBlocks.Abstractions.CQRS.Events.Internal;
 using BuildingBlocks.Abstractions.Messaging;
 using Flora.Services.Catalogs.Products.Features.CreatingProduct.v1.Events.Domain;
+using Flora.Services.Shared.Catalogs.Products.Events.v1.Integration;
 
 namespace Flora.Services.Catalogs.Products.Features.CreatingProduct.v1.Events.Notification;
 
@@ -25,17 +26,18 @@ internal class ProductCreatedNotificationHandler : IDomainNotificationEventHandl
 
     public async Task Handle(ProductCreatedNotification notification, CancellationToken cancellationToken)
     {
-        // We could publish integration event to bus here
-        // await _bus.PublishAsync(
-        //     new Flora.Services.Shared.Catalogs.Products.Events.Integration.ProductCreatedV1(
-        //         notification.InternalCommandId,
-        //         notification.Name,
-        //         notification.Stock,
-        //         notification.CategoryName ?? "",
-        //         notification.Stock),
-        //     null,
-        //     cancellationToken);
-
-        return;
+        await _bus.PublishAsync(
+            new ProductCreatedV1(
+                notification.DomainEvent.Product.Id,
+                notification.DomainEvent.Product.Name,
+                notification.DomainEvent.Product.Description!,
+                notification.DomainEvent.Product.Price,
+                notification.DomainEvent.Product.ProductStatus.ToString(),
+                notification.DomainEvent.Product.CategoryId,
+                notification.DomainEvent.Product.Category?.Name ?? string.Empty,
+                notification.DomainEvent.Product.Stock.Available,
+                notification.DomainEvent.Product.Images.First().ImageUrl),
+            null,
+            cancellationToken);
     }
 }

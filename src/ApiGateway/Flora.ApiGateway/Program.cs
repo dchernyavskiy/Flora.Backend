@@ -1,8 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using BuildingBlocks.Logging;
-using BuildingBlocks.Swagger;
-using Flora.ApiGateway;
-using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SpectreConsole;
@@ -45,9 +42,7 @@ builder.Services
                     return ValueTask.CompletedTask;
                 });
         });
-
 var app = builder.Build();
-
 // request logging just log in information level and above as default
 app.UseSerilogRequestLogging(
     opts =>

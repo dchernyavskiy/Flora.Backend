@@ -5,6 +5,7 @@ using BuildingBlocks.Abstractions.CQRS.Events.Internal;
 using BuildingBlocks.Abstractions.Domain;
 using BuildingBlocks.Abstractions.Persistence;
 using BuildingBlocks.Abstractions.Persistence.EfCore;
+using BuildingBlocks.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -12,11 +13,23 @@ namespace BuildingBlocks.Core.Persistence.EfCore;
 
 public abstract class EfDbContextBase : DbContext, IDbFacadeResolver, IDbContext, IDomainEventContext
 {
-    // private readonly IDomainEventPublisher _domainEventPublisher;
     private IDbContextTransaction? _currentTransaction;
 
     protected EfDbContextBase(DbContextOptions options)
-        : base(options) { }
+        : base(options)
+    {
+    }
+
+    // public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    // {
+    //     foreach (var @event in ChangeTracker.Entries<Aggregate<Guid>>()
+    //                  .SelectMany(x => x.Entity.GetUncommittedDomainEvents()))
+    //     {
+    //         await _domainEventPublisher.PublishAsync(@event, cancellationToken);
+    //     }
+    //
+    //     return await base.SaveChangesAsync(cancellationToken);
+    // }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,8 +71,7 @@ public abstract class EfDbContextBase : DbContext, IDbFacadeResolver, IDbContext
             BinaryExpression compareExpression = Expression.MakeBinary(
                 ExpressionType.Equal,
                 isDeletedProperty,
-                Expression.Constant(false)
-            );
+                Expression.Constant(false));
 
             // TEntity => EF.Property<bool>(TEntity, "IsDeleted") == false
             var lambda = Expression.Lambda(compareExpression, parameter);
@@ -146,42 +158,44 @@ public abstract class EfDbContextBase : DbContext, IDbFacadeResolver, IDbContext
     public Task ExecuteTransactionalAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
         var strategy = Database.CreateExecutionStrategy();
-        return strategy.ExecuteAsync(async () =>
-        {
-            await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
-            try
+        return strategy.ExecuteAsync(
+            async () =>
             {
-                await action();
+                await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+                try
+                {
+                    await action();
 
-                await transaction.CommitAsync(cancellationToken);
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                throw;
-            }
-        });
+                    await transaction.CommitAsync(cancellationToken);
+                }
+                catch
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
     }
 
     public Task<T> ExecuteTransactionalAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken = default)
     {
         var strategy = Database.CreateExecutionStrategy();
-        return strategy.ExecuteAsync(async () =>
-        {
-            await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
-            try
+        return strategy.ExecuteAsync(
+            async () =>
             {
-                var result = await action();
+                await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+                try
+                {
+                    var result = await action();
 
-                await transaction.CommitAsync(cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
 
-                return result;
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                throw;
-            }
-        });
+                    return result;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
     }
 }

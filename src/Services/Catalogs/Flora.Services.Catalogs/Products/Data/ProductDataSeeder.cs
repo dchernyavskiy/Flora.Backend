@@ -1,8 +1,11 @@
 using Bogus;
 using BuildingBlocks.Abstractions.Persistence;
+using Flora.Services.Catalogs.Categories;
 using Flora.Services.Catalogs.Products.Models;
 using Flora.Services.Catalogs.Products.ValueObjects;
 using Flora.Services.Catalogs.Shared.Contracts;
+using Flora.Services.Shared.Catalogs.Products.Events.v1.Integration;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flora.Services.Catalogs.Products.Data;
@@ -12,7 +15,7 @@ public class ProductDataSeeder : IDataSeeder
     // because AutoFaker generate data also for private set and init members (not read only get) it doesn't work properly with `CustomInstantiator` and we should exclude theme one by one
     public sealed class ProductSeedFaker : Faker<Product>
     {
-        public ProductSeedFaker(Guid categoryId)
+        public ProductSeedFaker(Category category)
         {
             CustomInstantiator(
                 faker =>
@@ -26,10 +29,10 @@ public class ProductDataSeeder : IDataSeeder
                            {
                                Name = faker.Commerce.ProductName(),
                                Description = faker.Commerce.ProductDescription(),
-                               Price = faker.PickRandom<decimal>(100, 200, 500),
-                               ProductStatus = faker.PickRandom<ProductStatus>(),
                                Stock = Stock.Of(faker.Random.Int(10, 20), 5, 20),
-                               CategoryId = categoryId,
+                               ProductStatus = faker.PickRandom<ProductStatus>(),
+                               Price = faker.PickRandom<decimal>(100, 200, 500),
+                               Category = category,
                                Images = images
                            };
                 });
@@ -37,20 +40,37 @@ public class ProductDataSeeder : IDataSeeder
     }
 
     private readonly ICatalogDbContext _dbContext;
+    private readonly IBus _bus;
 
-    public ProductDataSeeder(ICatalogDbContext dbContext)
+    public ProductDataSeeder(ICatalogDbContext dbContext, IBus bus)
     {
         _dbContext = dbContext;
+        _bus = bus;
     }
 
     public async Task SeedAllAsync()
     {
         if (await _dbContext.Products.AnyAsync()) return;
 
-        var categoryIds = await _dbContext.Categories.Select(x => x.Id).ToListAsync();
-        foreach (var id in categoryIds)
+        var categories = await _dbContext.Categories.ToListAsync();
+        foreach (var category in categories)
         {
-            await _dbContext.Products.AddRangeAsync(new ProductSeedFaker(id).GenerateBetween(10, 30));
+            var products = new ProductSeedFaker(category).GenerateBetween(10, 30);
+            await _dbContext.Products.AddRangeAsync(products);
+            foreach (var product in products)
+            {
+                await _bus.Publish<ProductCreatedV1>(
+                    new ProductCreatedV1(
+                        product.Id,
+                        product.Name,
+                        product.Description,
+                        product.Price,
+                        product.ProductStatus.ToString(),
+                        product.CategoryId,
+                        product.Category.Name,
+                        product.Stock.Available,
+                        product.Images.First().ImageUrl));
+            }
         }
 
         await _dbContext.SaveChangesAsync();

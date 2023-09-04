@@ -1,8 +1,10 @@
+using BuildingBlocks.Abstractions.CQRS.Events.Internal;
 using BuildingBlocks.Core.Persistence.EfCore;
 using Flora.Services.Catalogs.Categories;
 using Flora.Services.Catalogs.Characteristics.Models;
 using Flora.Services.Catalogs.Products.Models;
 using Flora.Services.Catalogs.Shared.Contracts;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flora.Services.Catalogs.Shared.Data;

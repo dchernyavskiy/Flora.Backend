@@ -21,12 +21,12 @@ public static class IdentityServerConfig
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
-        new List<ApiScope> { new("shop-api", "Flora.Services.Catalogs Web API") };
+        new List<ApiScope> { new("shop-api", "Flora.Services.Orders Web API") };
 
     public static IList<ApiResource> ApiResources =>
         new List<ApiResource>
         {
-            new ApiResource("ShopApiResource", "Flora.Services.Catalogs Web API Resource")
+            new ApiResource("ShopApiResource", "Flora.Services.Orders Web API Resource")
             {
                 Scopes = { "shop-api" },
                 UserClaims = { JwtClaimTypes.Role, JwtClaimTypes.Name, JwtClaimTypes.Id }

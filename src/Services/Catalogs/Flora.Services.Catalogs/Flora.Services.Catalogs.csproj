@@ -44,4 +44,8 @@
     <Folder Include="Shared\Data\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+  </ItemGroup>
+
 </Project>

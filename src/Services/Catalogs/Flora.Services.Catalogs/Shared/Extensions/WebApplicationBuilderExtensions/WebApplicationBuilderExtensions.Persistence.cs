@@ -22,7 +22,7 @@ public static partial class WebApplicationBuilderExtensions
         if (configuration.GetValue<bool>("PostgresOptions:UseInMemory"))
         {
             services.AddDbContext<CatalogDbContext>(
-                options => options.UseInMemoryDatabase("Flora.Services.Flora.Services.Catalogs")
+                options => options.UseInMemoryDatabase("Flora.Services.Flora.Services.Orders")
             );
 
             services.AddScoped<IDbFacadeResolver>(provider => provider.GetService<CatalogDbContext>()!);

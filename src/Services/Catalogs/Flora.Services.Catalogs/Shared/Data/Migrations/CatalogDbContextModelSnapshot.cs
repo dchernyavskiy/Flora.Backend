@@ -53,12 +53,19 @@ namespace Flora.Services.Catalogs.Shared.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("original_version");
 
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_id");
+
                     b.HasKey("Id")
                         .HasName("pk_categories");
 
                     b.HasIndex("Id")
                         .IsUnique()
                         .HasDatabaseName("ix_categories_id");
+
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("ix_categories_parent_id");
 
                     b.ToTable("categories", "catalog");
                 });
@@ -215,6 +222,12 @@ namespace Flora.Services.Catalogs.Shared.Data.Migrations
 
             modelBuilder.Entity("Flora.Services.Catalogs.Categories.Category", b =>
                 {
+                    b.HasOne("Flora.Services.Catalogs.Categories.Category", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_categories_categories_parent_id");
+
                     b.OwnsOne("Flora.Services.Catalogs.Products.Models.Image", "Image", b1 =>
                         {
                             b1.Property<Guid>("CategoryId")
@@ -240,6 +253,8 @@ namespace Flora.Services.Catalogs.Shared.Data.Migrations
                         });
 
                     b.Navigation("Image");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Flora.Services.Catalogs.Characteristics.Models.Characteristic", b =>
@@ -358,6 +373,8 @@ namespace Flora.Services.Catalogs.Shared.Data.Migrations
             modelBuilder.Entity("Flora.Services.Catalogs.Categories.Category", b =>
                 {
                     b.Navigation("Characteristics");
+
+                    b.Navigation("Children");
 
                     b.Navigation("Products");
                 });

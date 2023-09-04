@@ -12,6 +12,8 @@ public class CategoryDataSeeder : IDataSeeder
 {
     public sealed class CategorySeedFaker : Faker<Category>
     {
+        public int Generation { get; private set; } = 1;
+
         public CategorySeedFaker()
         {
             CustomInstantiator(
@@ -20,7 +22,18 @@ public class CategoryDataSeeder : IDataSeeder
                              Name = faker.Commerce.Categories(1).First(),
                              Description = faker.Commerce.ProductDescription(),
                              Image = new Image() {ImageUrl = faker.Image.PicsumUrl(400, 400), IsMain = true},
+                             Children = GenerateChildren(faker)
                          });
+        }
+
+        private ICollection<Category> GenerateChildren(Faker faker)
+        {
+            if (this.Generation < 2)
+            {
+                return new CategorySeedFaker() {Generation = this.Generation + 1}.Generate(faker.Random.Int(0, 5));
+            }
+
+            return Enumerable.Empty<Category>().ToList();
         }
     }
 

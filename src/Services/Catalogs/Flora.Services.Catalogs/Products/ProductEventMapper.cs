@@ -16,38 +16,38 @@ public class ProductEventMapper : IEventMapper
     public IIntegrationEvent? MapToIntegrationEvent(IDomainEvent domainEvent)
     {
         return domainEvent switch
-        {
-            ProductCreated e
-                => new ProductCreatedV1(
-                    e.Product.Id,
-                    e.Product.Name,
-                    e.Product.Category.Id,
-                    e.Product.Category.Name,
-                    e.Product.Stock.Available
-                ),
-            ProductStockDebited e
-                => new ProductStockDebitedV1(
-                    e.ProductId,
-                    e.NewStock.Available,
-                    e.DebitedQuantity
-                ),
-            ProductStockReplenished e
-                => new ProductStockReplenishedV1(
-                    e.ProductId,
-                    e.NewStock.Available,
-                    e.ReplenishedQuantity
-                ),
-            _ => null
-        };
+               {
+                   ProductCreated e
+                       => new ProductCreatedV1(
+                           e.Product.Id,
+                           e.Product.Name,
+                           e.Product.Description,
+                           e.Product.Price,
+                           e.Product.ProductStatus.ToString(),
+                           e.Product.Category.Id,
+                           e.Product.Category.Name,
+                           e.Product.Stock.Available,
+                           e.Product.Images.First().ImageUrl),
+                   ProductStockDebited e
+                       => new ProductStockDebitedV1(
+                           e.ProductId,
+                           e.NewStock.Available,
+                           e.DebitedQuantity),
+                   ProductStockReplenished e
+                       => new ProductStockReplenishedV1(
+                           e.ProductId,
+                           e.NewStock.Available,
+                           e.ReplenishedQuantity),
+                   _ => null
+               };
     }
 
     public IDomainNotificationEvent? MapToDomainNotificationEvent(IDomainEvent domainEvent)
     {
         return domainEvent switch
-        {
-            ProductCreated e => new ProductCreatedNotification(e),
-            _ => null
-        };
+               {
+                   ProductCreated e => new ProductCreatedNotification(e), _ => null
+               };
     }
 
     public IReadOnlyList<IIntegrationEvent?> MapToIntegrationEvents(IReadOnlyList<IDomainEvent> domainEvents)
